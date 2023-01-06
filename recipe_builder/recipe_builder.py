@@ -47,7 +47,6 @@ class Recipe:
     Product_Start: int = 45
     Belts_Start: int = 1
     Bag_Length: int = 250  # 101.2 This is in pulse, required for PLC but not user input
-    Bag_Length_mm: int = 55  # user input
     Jaws_Open: int = 160
     Jaws_Close: int = 70
     Knife_Advance: int = 150
@@ -93,14 +92,14 @@ def cycle_calculator():
     jaws_dwell = APP.ui.slider_dwell_time.value()
     total_cycle_delay = 15  # allow an end of cycle
 
-    recipe.Bag_Length_mm = APP.ui.input_bag_length.value()
-    recipe.Bag_Length = recipe.Bag_Length_mm * 2  # convert from input in mm to pulses used by plc
+    Bag_Length_mm = APP.ui.input_bag_length.value()
+    recipe.Bag_Length = int(Bag_Length_mm * 2)  # convert from input in mm to pulses used by plc
 
     belts_end = ((recipe.Bag_Length / V_MAX) + 0.5 * T_A) + 0.5 + T_D  # predict belt end time
 
-    recipe.Jaws_Close = belts_end + jaws_close_delay
-    recipe.Jaws_Open = recipe.Jaws_Close + jaws_dwell
-    recipe.Cycle_Time = recipe.Jaws_Open + total_cycle_delay
+    recipe.Jaws_Close = int(belts_end + jaws_close_delay)
+    recipe.Jaws_Open = int(recipe.Jaws_Close + jaws_dwell)
+    recipe.Cycle_Time = int(recipe.Jaws_Open + total_cycle_delay)
 
     print("Belts End: ", belts_end)
     print("Jaws Close: ", recipe.Jaws_Close)
